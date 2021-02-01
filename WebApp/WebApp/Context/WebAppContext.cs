@@ -13,11 +13,6 @@ namespace WebApp.Context
             
         }
 
-        public WebAppContext(IConfiguration _configuration)
-        {
-            Configuration = _configuration;
-        }
-
         public WebAppContext(DbContextOptions options) : base(options)
         {
             Database.EnsureCreated();
@@ -26,7 +21,11 @@ namespace WebApp.Context
         public DbSet<Student> Students { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         }
     }
 }
